@@ -1,0 +1,3 @@
+rootProject.name = 'Magento'
+
+include ':app'
