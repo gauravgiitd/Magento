@@ -13,13 +13,12 @@ import React, {
   View,
 } from 'react-native';
 
-var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
-var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
+var API_URL = 'http://magento.westus.cloudapp.azure.com/index.php/rest/V1/products';
 var PAGE_SIZE = 25;
-var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
+var PARAMS = '?searchCriteria[pageSize]=' + PAGE_SIZE;
 var REQUEST_URL = API_URL + PARAMS;
 
-class AwesomeProject extends Component {
+class Magento extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,7 +38,7 @@ class AwesomeProject extends Component {
       .then((response) => response.json())
       .then((responseData) => {
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+          dataSource: this.state.dataSource.cloneWithRows(responseData.items),
           loaded: true,
         });
       })
@@ -54,7 +53,7 @@ class AwesomeProject extends Component {
     return (
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={this.renderMovie}
+        renderRow={this.renderItem}
         style={styles.listView}
       />
     );
@@ -64,22 +63,23 @@ class AwesomeProject extends Component {
     return (
       <View style={styles.container}>
         <Text>
-          Loading movies...
+          Loading items...
         </Text>
       </View>
     );
   }
 
-  renderMovie(movie) {
+  renderItem(item) {
     return (
       <View style={styles.container}>
         <Image
-          source={{uri: movie.posters.thumbnail}}
+          source={{uri: 'http://magento.westus.cloudapp.azure.com/pub/media/catalog/product/cache/1/small_image/240x300/beff4985b56e3afdbeabfc89641a4582'
+          + item.custom_attributes.find((attribute) => { return attribute.attribute_code == "small_image" }).value}}
           style={styles.thumbnail}
         />
         <View style={styles.rightContainer}>
-          <Text style={styles.title}>{movie.title}</Text>
-          <Text style={styles.year}>{movie.year}</Text>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.description}>{item.custom_attributes.find((attribute) => { return attribute.attribute_code == "description" }).value}</Text>
         </View>
       </View>
     );
@@ -97,12 +97,12 @@ var styles = StyleSheet.create({
   rightContainer: {
     flex: 1,
   },
-  title: {
+  name: {
     fontSize: 20,
     marginBottom: 8,
     textAlign: 'center',
   },
-  year: {
+  description: {
     textAlign: 'center',
   },
   thumbnail: {
@@ -115,4 +115,4 @@ var styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('AwesomeProject', () => AwesomeProject);
+AppRegistry.registerComponent('Magento', () => Magento);
