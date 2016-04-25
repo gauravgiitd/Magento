@@ -13,6 +13,32 @@ import React, {
   View,
 } from 'react-native';
 
+import SwipeCards from 'react-native-swipe-cards';
+
+let Card = React.createClass({
+  Card(name) {
+  this.props.text = name;
+  this.props.backgroundColor = 'Red';
+  },
+
+  render() {
+    return (
+      <View style={[styles.card, {backgroundColor: this.props.backgroundColor}]}>
+        <Text>{this.props.text}</Text>
+      </View>
+    )
+  }
+})
+
+const Cards = [
+  {text: 'Tomato', backgroundColor: 'red'},
+  {text: 'Aubergine', backgroundColor: 'purple'},
+  {text: 'Courgette', backgroundColor: 'green'},
+  {text: 'Blueberry', backgroundColor: 'blue'},
+  {text: 'Umm...', backgroundColor: 'cyan'},
+  {text: 'orange', backgroundColor: 'orange'},
+]
+
 var API_URL = 'http://magento.westus.cloudapp.azure.com/index.php/rest/V1/products';
 var PAGE_SIZE = 25;
 var PARAMS = '?searchCriteria[pageSize]=' + PAGE_SIZE;
@@ -26,6 +52,7 @@ class Magento extends Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       loaded: false,
+      cards: []
     };
   }
 
@@ -40,9 +67,17 @@ class Magento extends Component {
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(responseData.items),
           loaded: true,
+          cards: responseData.items.map((x) => new Card(x.name))
         });
       })
       .done();
+  }
+
+  handleYup (card) {
+    console.log(`Yup for ${card.text}`)
+  }
+  handleNope (card) {
+    console.log(`Nope for ${card.text}`)
   }
 
   render() {
@@ -51,11 +86,23 @@ class Magento extends Component {
     }
 
     return (
+    <View>
+
+      <SwipeCards
+              cards={this.state.cards}
+
+              renderCard={(cardData) => <Card {...cardData} />}
+              renderNoMoreCards={() => <NoMoreCards />}
+
+              handleYup={this.handleYup}
+              handleNope={this.handleNope}
+      />
       <ListView
         dataSource={this.state.dataSource}
         renderRow={this.renderItem}
         style={styles.listView}
       />
+    </View>
     );
   }
 
@@ -112,6 +159,13 @@ var styles = StyleSheet.create({
   listView: {
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
+  },
+  card: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 300,
+    height: 300,
   },
 });
 
