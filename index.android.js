@@ -15,34 +15,28 @@ import React, {
 
 import SwipeCards from 'react-native-swipe-cards';
 
-let Card = React.createClass({
-  Card(name) {
-  this.props.text = name;
-  this.props.backgroundColor = 'Red';
-  },
+var API_URL = 'http://magento.westus.cloudapp.azure.com/index.php/rest/V1/products';
+var PAGE_SIZE = 25;
+var PARAMS = '?searchCriteria[pageSize]=' + PAGE_SIZE;
+var REQUEST_URL = API_URL + PARAMS;
 
+
+let Card = React.createClass({
   render() {
+    item = this.props.props;
     return (
-      <View style={[styles.card, {backgroundColor: this.props.backgroundColor}]}>
-        <Text>{this.props.text}</Text>
+      <View style={[styles.card, {backgroundColor: 'white'}]}>
+        <Image
+          source={{uri: 'http://magento.westus.cloudapp.azure.com/pub/media/catalog/product/cache/1/small_image/240x300/beff4985b56e3afdbeabfc89641a4582'
+          + item.custom_attributes.find((attribute) => { return attribute.attribute_code == "small_image" }).value}}
+          style={styles.thumbnail}
+        />
+        <Text>{item.name}</Text>
       </View>
     )
   }
 })
 
-const Cards = [
-  {text: 'Tomato', backgroundColor: 'red'},
-  {text: 'Aubergine', backgroundColor: 'purple'},
-  {text: 'Courgette', backgroundColor: 'green'},
-  {text: 'Blueberry', backgroundColor: 'blue'},
-  {text: 'Umm...', backgroundColor: 'cyan'},
-  {text: 'orange', backgroundColor: 'orange'},
-]
-
-var API_URL = 'http://magento.westus.cloudapp.azure.com/index.php/rest/V1/products';
-var PAGE_SIZE = 25;
-var PARAMS = '?searchCriteria[pageSize]=' + PAGE_SIZE;
-var REQUEST_URL = API_URL + PARAMS;
 
 class Magento extends Component {
   constructor(props) {
@@ -64,10 +58,11 @@ class Magento extends Component {
     fetch(REQUEST_URL)
       .then((response) => response.json())
       .then((responseData) => {
+        cards = responseData.items.map(x => React.createElement(Card, x));
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.items),
+          cards,
+          dataSource: this.state.dataSource.cloneWithRows(cards),
           loaded: true,
-          cards: responseData.items.map((x) => new Card(x.name))
         });
       })
       .done();
@@ -86,23 +81,17 @@ class Magento extends Component {
     }
 
     return (
-    <View>
-
-      <SwipeCards
-              cards={this.state.cards}
-
-              renderCard={(cardData) => <Card {...cardData} />}
-              renderNoMoreCards={() => <NoMoreCards />}
-
-              handleYup={this.handleYup}
-              handleNope={this.handleNope}
-      />
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderItem}
-        style={styles.listView}
-      />
-    </View>
+    <SwipeCards
+      cards={this.state.cards}
+      renderCard={(cardData) => <Card {...cardData} />}
+      renderNoMoreCards={() => <ListView
+                                 dataSource={this.state.dataSource}
+                                 renderRow={this.renderItem}
+                                 style={styles.listView}
+                               />}
+      handleYup={this.handleYup}
+      handleNope={this.handleNope}
+    />
     );
   }
 
@@ -116,7 +105,8 @@ class Magento extends Component {
     );
   }
 
-  renderItem(item) {
+  renderItem(card) {
+    item = card.props;
     return (
       <View style={styles.container}>
         <Image
