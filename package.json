@@ -8,6 +8,7 @@
   "dependencies": {
     "react": "^0.14.8",
     "react-native": "^0.24.1",
+    "react-native-fbsdk": "^0.1.0",
     "react-native-swipe-cards": "0.0.7"
   }
 }
