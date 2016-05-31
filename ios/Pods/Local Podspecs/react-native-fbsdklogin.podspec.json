@@ -1,6 +1,6 @@
 {
   "name": "react-native-fbsdklogin",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.1",
   "summary": "iOS FBSDKLoginKit support for React Native apps.",
   "requires_arc": true,
   "authors": {
