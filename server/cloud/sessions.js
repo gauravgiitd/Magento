@@ -32,20 +32,28 @@ var REQUEST_URL = API_URL + PARAMS;
 async function importObject(ClassType, item) {
   let obj = new ClassType();
 
-  var description = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "description" });
-  var image = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "small_image" });
   console.log(item.name);
 
 
   obj.set('day', 1);
   obj.set('sessionTitle', item.name);
+  var description = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "description" });
   if (description != null) obj.set('sessionDescription', description.value);
+  var image = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "small_image" });
   if (image != null)
   {
     var imagePath = 'http://magento.westus.cloudapp.azure.com/pub/media/catalog/product/cache/1/small_image/240x300/beff4985b56e3afdbeabfc89641a4582' + image.value;
     console.log(imagePath);
     obj.set('ogImage', imagePath);
   }
+  var metal_purity = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "metal_purity" });
+  if (metal_purity != null) obj.set('metal_purity', metal_purity.value);
+  var metal_color = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "metal_color" });
+  if (metal_color != null) obj.set('metal_color', metal_color.value);
+  var diamond_quality = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "diamond_quality" });
+  if (diamond_quality != null) obj.set('diamond_quality', diamond_quality.value);
+  var ring_size = item.custom_attributes.find((attribute) => { return attribute.attribute_code == "ring_size" });
+  if (ring_size != null) obj.set('ring_size', ring_size.value);
 
   obj = await obj.save();
   console.log(obj);

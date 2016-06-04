@@ -70,6 +70,10 @@ type Session implements Node {
   location: Map
   description: String
   ogImage: String
+  metal_color: String
+  ring_size: String
+  diamond_quality: String
+  metal_purity: String
   speakers: [Speaker]
   isAdded: Boolean
   friends: [Friend]

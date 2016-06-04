@@ -41,6 +41,11 @@ export type Session = {
   title: string;
   description: string;
   ogImage: string;
+  price: number;
+  metal_color: string;
+  ring_size: string;
+  diamond_quality: string;
+  metal_purity: string;
   hasDetails: boolean;
   slug: string;
   speakers: Array<Speaker>;
@@ -71,6 +76,10 @@ function fromParseSessions(session: Object): Session {
     title: session.get('sessionTitle'),
     description: session.get('sessionDescription'),
     ogImage: session.get('ogImage'),
+    metal_color: session.get('metal_color'),
+    ring_size: session.get('ring_size'),
+    diamond_quality: session.get('diamond_quality'),
+    metal_purity: session.get('metal_purity'),
     hasDetails: session.get('hasDetails'),
     slug: session.get('sessionSlug'),
     speakers: (session.get('speakers') || []).map(fromParseSpeaker),

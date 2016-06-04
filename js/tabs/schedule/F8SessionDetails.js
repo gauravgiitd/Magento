@@ -41,10 +41,13 @@ var { Text } = require('F8Text');
 var TouchableOpacity = require('TouchableOpacity');
 var View = require('View');
 var AddToScheduleButton = require('./AddToScheduleButton');
+var { Picker } = require('react-native');
+var Item = Picker.Item;
 
 var formatDuration = require('./formatDuration');
 var {connect} = require('react-redux');
 var {addToSchedule, removeFromScheduleWithPrompt} = require('../../actions');
+
 
 var F8SessionDetails = React.createClass({
   mixins: [Subscribable.Mixin],
@@ -105,6 +108,13 @@ var F8SessionDetails = React.createClass({
     var title = this.props.session.title || '';
     var isReactTalk = title.indexOf('React') > -1;
 
+    var metalColorOptions = ['Yellow', 'White', 'Rose'];
+    var diamondQualityOptions = ['EF VVS', 'GH VS-SI', 'GH SI-I'];
+    var metalPurityOptions = ['14K', '18K', '22K'];
+    var FillDropDown = function(X) {
+                return <Picker.Item label={X} value={X} />
+            };
+
     return (
       <View style={[styles.container, this.props.style]}>
         <ScrollView
@@ -121,6 +131,30 @@ var F8SessionDetails = React.createClass({
             {this.props.session.description}
           </Text>
           <Image style={styles.image} source={{uri: this.props.session.ogImage}} />
+          <Text style={styles.description}>Price: {this.props.session.price}</Text>
+
+          <Text style={styles.description}>Color</Text>
+          <Picker selectedValue={this.state.metalColorSelected}
+                  onValueChange={this.onValueChange.bind(this, 'metalColorSelected')}>
+             {metalColorOptions.map(FillDropDown)}
+          </Picker>
+          <Text style={styles.description}>Diamond</Text>
+          <Picker selectedValue={this.state.diamondQualitySelected}
+                  onValueChange={this.onValueChange.bind(this, 'diamondQualitySelected')}>
+             {diamondQualityOptions.map(FillDropDown)}
+          </Picker>
+          <Text style={styles.description}>Purity</Text>
+          <Picker selectedValue={this.state.metalPuritySelected}
+                  onValueChange={this.onValueChange.bind(this, 'metalPuritySelected')}>
+             {metalPurityOptions.map(FillDropDown)}
+          </Picker>
+          <Text style={styles.description}>
+
+             {this.props.session.metal_color}
+             {this.props.session.ring_size}
+             {this.props.session.diamond_quality}
+             {this.props.session.metal_purity}
+          </Text>
           <Section>
             {topics}
           </Section>
@@ -164,6 +198,12 @@ var F8SessionDetails = React.createClass({
       </View>
     );
   },
+
+  onValueChange: function(key: string, value: string) {
+      this.state[key] = value;
+      this.props.session.price = 10;
+      this.setState(this.state);
+    },
 
   toggleAdded: function() {
     if (this.props.isAddedToSchedule) {
